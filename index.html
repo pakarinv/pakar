@@ -1,0 +1,547 @@
+import React, { useState, useEffect } from 'react';
+
+// Main App component
+const App = () => {
+    // State to manage the current page, simulating routing
+    const [currentPage, setCurrentPage] = useState('home');
+    // State to manage the visibility of the courses dropdown
+    const [isCoursesDropdownOpen, setIsCoursesDropdownOpen] = useState(false);
+    // State for showing temporary messages (e.g., for "coming soon" features)
+    const [message, setMessage] = useState('');
+
+    // Function to navigate to a different page
+    const navigateTo = (page) => {
+        setCurrentPage(page);
+        // Clear any temporary messages when navigating
+        setMessage('');
+    };
+
+    // Function to display a temporary message
+    const showMessage = (text) => {
+        setMessage(text);
+        setTimeout(() => {
+            setMessage('');
+        }, 3000); // Message disappears after 3 seconds
+    };
+
+    // Render different components based on the current page
+    const renderPage = () => {
+        switch (currentPage) {
+            case 'home':
+                return <HomePage navigateTo={navigateTo} showMessage={showMessage} />;
+            case 'courses':
+                return <CoursesPage navigateTo={navigateTo} />;
+            case 'courseDetail':
+                return <CourseDetailPage showMessage={showMessage} />;
+            case 'about':
+                return <AboutPage navigateTo={navigateTo} showMessage={showMessage} />;
+            case 'contact':
+                return <ContactPage navigateTo={navigateTo} showMessage={showMessage} />; // Render ContactPage
+            default:
+                return <HomePage navigateTo={navigateTo} showMessage={showMessage} />;
+        }
+    };
+
+    return (
+        <div className="min-h-screen bg-sky-50 font-sans text-gray-800">
+            {/* Header Navigation */}
+            <header className="bg-indigo-700 p-4 shadow-lg">
+                <nav className="container mx-auto flex items-center justify-between">
+                    <div
+                        className="text-white text-3xl font-extrabold cursor-pointer transition-transform duration-300 hover:scale-105"
+                        onClick={() => navigateTo('home')}
+                    >
+                        Yuktio
+                    </div>
+                    <ul className="flex space-x-6">
+                        <li>
+                            <button
+                                className="text-white text-lg font-medium hover:text-sky-200 transition-colors duration-200"
+                                onClick={() => navigateTo('home')}
+                            >
+                                Home
+                            </button>
+                        </li>
+                        {/* Courses with Dropdown */}
+                        <li
+                            className="relative"
+                            onMouseEnter={() => setIsCoursesDropdownOpen(true)}
+                            onMouseLeave={() => setIsCoursesDropdownOpen(false)}
+                        >
+                            <button
+                                className="text-white text-lg font-medium hover:text-sky-200 transition-colors duration-200"
+                                onClick={() => navigateTo('courses')}
+                            >
+                                Courses
+                                <svg className="w-4 h-4 inline-block ml-1 -mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            {isCoursesDropdownOpen && (
+                                <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
+                                    {/* Updated sub-pages for Courses dropdown */}
+                                    {['Maths', 'English', 'Science'].map((subject, index) => (
+                                        <button
+                                            key={index}
+                                            onClick={() => {
+                                                console.log(`Navigating to ${subject} courses!`);
+                                                showMessage(`Navigating to ${subject} courses!`);
+                                                setIsCoursesDropdownOpen(false);
+                                            }}
+                                            className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left"
+                                        >
+                                            {subject}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </li>
+                        <li>
+                            <button
+                                className="text-white text-lg font-medium hover:text-sky-200 transition-colors duration-200"
+                                onClick={() => navigateTo('about')}
+                            >
+                                About
+                            </button>
+                        </li>
+                        <li>
+                            <button
+                                className="text-white text-lg font-medium hover:text-sky-200 transition-colors duration-200"
+                                onClick={() => navigateTo('contact')} // Navigate to ContactPage
+                            >
+                                Contact
+                            </button>
+                        </li>
+                    </ul>
+                </nav>
+            </header>
+
+            {/* Temporary Message Display */}
+            {message && (
+                <div className="fixed top-20 left-1/2 transform -translate-x-1/2 bg-sky-500 text-white px-6 py-3 rounded-full shadow-lg z-50 transition-all duration-300 ease-out">
+                    {message}
+                </div>
+            )}
+
+            {/* Main Content Area */}
+            <main className="container mx-auto p-6 md:p-8">
+                {renderPage()}
+            </main>
+
+            {/* Footer */}
+            <footer className="bg-gray-900 text-white p-6 text-center shadow-inner mt-10">
+                <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+                    {/* Social Media Icons */}
+                    <div className="flex justify-center md:justify-start space-x-6 text-2xl">
+                        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-sky-400 transition-colors duration-200">
+                            <i className="fab fa-linkedin"></i> {/* Placeholder for LinkedIn icon */}
+                            <span className="sr-only">LinkedIn</span>
+                        </a>
+                        <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="hover:text-sky-400 transition-colors duration-200">
+                            <i className="fab fa-youtube"></i> {/* Placeholder for YouTube icon */}
+                            <span className="sr-only">YouTube</span>
+                        </a>
+                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-sky-400 transition-colors duration-200">
+                            <i className="fab fa-instagram"></i> {/* Placeholder for Instagram icon */}
+                            <span className="sr-only">Instagram</span>
+                        </a>
+                    </div>
+
+                    {/* Copyright */}
+                    <div className="text-sm">
+                        <p>&copy; 2025 Yuktio. All rights reserved.</p>
+                        <p className="mt-1">Built with passion for learning.</p>
+                    </div>
+
+                    {/* Legal Links */}
+                    <div className="flex justify-center md:justify-end space-x-6 text-sm">
+                        <a href="#" onClick={() => showMessage('Terms & Conditions page coming soon!')} className="hover:text-sky-400 transition-colors duration-200">Terms</a>
+                        <a href="#" onClick={() => showMessage('Privacy Policy page coming soon!')} className="hover:text-sky-400 transition-colors duration-200">Privacy</a>
+                        <a href="#" onClick={() => navigateTo('about')} className="hover:text-sky-400 transition-colors duration-200">About</a>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    );
+};
+
+// Home Page Component
+const HomePage = ({ navigateTo, showMessage }) => {
+    return (
+        <div className="space-y-12">
+            {/* Hero Section */}
+            <section className="bg-gradient-to-r from-indigo-600 to-indigo-800 text-white rounded-xl shadow-xl p-8 md:p-12 text-center transform hover:scale-[1.02] transition-transform duration-300 ease-in-out">
+                <h1 className="text-4xl md:text-6xl font-extrabold leading-tight mb-4 drop-shadow-lg">
+                    Unlock Your Potential with Yuktio
+                </h1>
+                <p className="text-xl md:text-2xl mb-8 opacity-90 max-w-3xl mx-auto">
+                    Interactive lessons, engaging quizzes, and insightful blogs to supercharge your learning journey.
+                </p>
+                <button
+                    onClick={() => navigateTo('courses')}
+                    className="bg-emerald-400 hover:bg-emerald-500 text-gray-900 font-bold py-3 px-8 rounded-full text-lg shadow-lg transform transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-emerald-300"
+                >
+                    Explore Courses
+                </button>
+            </section>
+
+            {/* Features Section */}
+            <section className="py-12 bg-white rounded-xl shadow-lg">
+                <h2 className="text-4xl font-bold text-center text-gray-900 mb-10">Why Choose Yuktio?</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-6">
+                    {/* Feature Card 1 */}
+                    <div className="bg-sky-100 p-8 rounded-xl shadow-md flex flex-col items-center text-center transition-transform duration-300 hover:scale-105 hover:shadow-lg">
+                        <div className="text-5xl text-indigo-600 mb-4">
+                            <i className="fas fa-chalkboard-teacher"></i> {/* Icon for interactive lessons */}
+                        </div>
+                        <h3 className="text-2xl font-semibold text-gray-800 mb-3">Interactive Lessons</h3>
+                        <p className="text-gray-600">Learn complex topics with ease through our dynamic and engaging lesson modules.</p>
+                    </div>
+                    {/* Feature Card 2 */}
+                    <div className="bg-sky-100 p-8 rounded-xl shadow-md flex flex-col items-center text-center transition-transform duration-300 hover:scale-105 hover:shadow-lg">
+                        <div className="text-5xl text-indigo-600 mb-4">
+                            <i className="fas fa-question-circle"></i> {/* Icon for quizzes */}
+                        </div>
+                        <h3 className="text-2xl font-semibold text-gray-800 mb-3">Engaging Quizzes</h3>
+                        <p className="text-gray-600">Test your knowledge and reinforce your learning with our fun and challenging quizzes.</p>
+                    </div>
+                    {/* Feature Card 3 */}
+                    <div className="bg-sky-100 p-8 rounded-xl shadow-md flex flex-col items-center text-center transition-transform duration-300 hover:scale-105 hover:shadow-lg">
+                        <div className="text-5xl text-indigo-600 mb-4">
+                            <i className="fas fa-book-open"></i> {/* Icon for insightful blogs */}
+                        </div>
+                        <h3 className="text-2xl font-semibold text-gray-800 mb-3">Insightful Blogs</h3>
+                        <p className="text-gray-600">Stay updated with the latest educational trends and tips from our expert bloggers.</p>
+                    </div>
+                </div>
+            </section>
+
+            {/* About Yuktio Section */}
+            <section className="py-12 bg-white rounded-xl shadow-lg">
+                <h2 className="text-4xl font-bold text-center text-gray-900 mb-10">About Yuktio</h2>
+                <div className="flex flex-col md:flex-row items-center justify-center px-6">
+                    <div className="md:w-1/2 md:pr-8 mb-8 md:mb-0">
+                        <p className="text-lg text-gray-700 leading-relaxed mb-4">
+                            Yuktio is an innovative online learning platform dedicated to making education accessible, fun, and empowering for young minds. We believe that learning should be an exciting adventure, not a chore.
+                        </p>
+                        <p className="text-lg text-gray-700 leading-relaxed">
+                            Our expertly crafted content, interactive tools, and supportive community are designed to help students of all ages achieve their academic goals and develop a lifelong love for learning.
+                        </p>
+                    </div>
+                    <div className="md:w-1/2">
+                        {/* Placeholder for an image or illustration */}
+                        <img
+                            src="https://placehold.co/600x400/E0F2F7/2C3E50?text=Students+Learning"
+                            alt="Students Learning"
+                            className="rounded-xl shadow-lg w-full h-auto object-cover transition-transform duration-300 hover:scale-105"
+                        />
+                    </div>
+                </div>
+            </section>
+
+
+            {/* Latest from Our Blog Section */}
+            <section className="py-12 bg-white rounded-xl shadow-lg">
+                <h2 className="text-4xl font-bold text-center text-gray-900 mb-10">Latest from Our Blog</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-6">
+                    {/* Blog Card 1 */}
+                    <div className="bg-gray-50 p-6 rounded-xl shadow-md transition-transform duration-300 hover:scale-105 hover:shadow-lg">
+                        <img
+                            src="https://placehold.co/400x250/B2EBF2/2C3E50?text=Blog+Post+1"
+                            alt="Blog Post 1"
+                            className="rounded-lg mb-4 w-full h-auto object-cover"
+                        />
+                        <h3 className="text-xl font-semibold text-gray-800 mb-2">The Future of Online Education</h3>
+                        <p className="text-gray-600 text-sm mb-3">Explore how online learning is evolving and what it means for students worldwide.</p>
+                        <button
+                            onClick={() => showMessage('Reading blog post 1!')}
+                            className="text-indigo-600 hover:text-indigo-800 font-medium text-sm transition-colors duration-200"
+                        >
+                            Read More <i className="fas fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                    {/* Blog Card 2 */}
+                    <div className="bg-gray-50 p-6 rounded-xl shadow-md transition-transform duration-300 hover:scale-105 hover:shadow-lg">
+                        <img
+                            src="https://placehold.co/400x250/B2EBF2/2C3E50?text=Blog+Post+2"
+                            alt="Blog Post 2"
+                            className="rounded-lg mb-4 w-full h-auto object-cover"
+                        />
+                        <h3 className="text-xl font-semibold text-gray-800 mb-2">5 Tips for Effective Studying</h3>
+                        <p className="text-gray-600 text-sm mb-3">Unlock your full academic potential with these proven study techniques.</p>
+                        <button
+                            onClick={() => showMessage('Reading blog post 2!')}
+                            className="text-indigo-600 hover:text-indigo-800 font-medium text-sm transition-colors duration-200"
+                        >
+                            Read More <i className="fas fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                    {/* Blog Card 3 */}
+                    <div className="bg-gray-50 p-6 rounded-xl shadow-md transition-transform duration-300 hover:scale-105 hover:shadow-lg">
+                        <img
+                            src="https://placehold.co/400x250/B2EBF2/2C3E50?text=Blog+Post+3"
+                            alt="Blog Post 3"
+                            className="rounded-lg mb-4 w-full h-auto object-cover"
+                        />
+                        <h3 className="text-xl font-semibold text-gray-800 mb-2">Mastering Math Made Easy</h3>
+                        <p className="text-gray-600 text-sm mb-3">Break down the barriers to understanding mathematics with our expert guide.</p>
+                        <button
+                            onClick={() => showMessage('Reading blog post 3!')}
+                            className="text-indigo-600 hover:text-indigo-800 font-medium text-sm transition-colors duration-200"
+                        >
+                            Read More <i className="fas fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    );
+};
+
+// Courses Page Component
+const CoursesPage = ({ navigateTo }) => {
+    // Dummy course data
+    const courses = [
+        { id: 1, title: 'Introduction to Algebra', description: 'Master the fundamentals of algebraic equations and expressions.', image: 'https://placehold.co/400x250/E0F2F7/2C3E50?text=Algebra' },
+        { id: 2, title: 'Basic Chemistry', description: 'Explore the building blocks of matter and chemical reactions.', image: 'https://placehold.co/400x250/CFE1E7/2C3E50?text=Chemistry' },
+        { id: 3, title: 'World History Overview', description: 'Journey through significant events and civilizations across the globe.', image: 'https://placehold.co/400x250/B2D4DE/2C3E50?text=History' },
+        { id: 4, title: 'Introduction to Physics', description: 'Understand the basic principles governing the physical world.', image: 'https://placehold.co/400x250/9EC6D0/2C3E50?text=Physics' },
+        { id: 5, title: 'Literary Analysis', description: 'Develop critical thinking skills through the analysis of classic literature.', image: 'https://placehold.co/400x250/8BB9C2/2C3E50?text=Literature' },
+        { id: 6, title: 'Fundamentals of Biology', description: 'Discover the science of life, from cells to ecosystems.', image: 'https://placehold.co/400x250/79A7B4/2C3E50?text=Biology' },
+    ];
+
+    return (
+        <div className="space-y-8">
+            <h2 className="text-4xl font-bold text-center text-gray-900 mb-8">Our Courses</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {courses.map(course => (
+                    <div
+                        key={course.id}
+                        className="bg-white rounded-xl shadow-lg overflow-hidden transition-transform duration-300 hover:scale-105 hover:shadow-xl cursor-pointer"
+                        onClick={() => {
+                            console.log(`Navigating to course detail for ${course.title}`);
+                            navigateTo('courseDetail'); // Simulate navigating to a detail page
+                        }}
+                    >
+                        <img
+                            src={course.image}
+                            alt={course.title}
+                            className="w-full h-48 object-cover"
+                            onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x250/E0F2F7/2C3E50?text=Course`; }}
+                        />
+                        <div className="p-6">
+                            <h3 className="text-2xl font-semibold text-gray-800 mb-2">{course.title}</h3>
+                            <p className="text-gray-600 line-clamp-3">{course.description}</p>
+                            <button
+                                className="mt-4 inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-5 rounded-full text-sm shadow-md transition-colors duration-200"
+                            >
+                                Learn More
+                            </button>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+// Course Detail Page Component (Simplified)
+const CourseDetailPage = ({ showMessage }) => {
+    return (
+        <div className="bg-white rounded-xl shadow-lg p-8 md:p-10 space-y-6">
+            <h2 className="text-4xl font-bold text-indigo-700 mb-4">Course Title: Deep Dive</h2>
+            <p className="text-gray-700 text-lg leading-relaxed">
+                This is a detailed overview of the selected course. Here you will find comprehensive information about the curriculum, learning objectives, instructor details, and more. Our goal is to provide a rich and immersive learning experience.
+            </p>
+            <p className="text-gray-700 text-lg leading-relaxed">
+                The course includes interactive modules, video lectures, downloadable resources, and practice exercises to ensure you grasp every concept thoroughly.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-sky-50 p-5 rounded-lg shadow-sm">
+                    <h3 className="text-xl font-semibold text-gray-800 mb-2">Learning Objectives</h3>
+                    <ul className="list-disc list-inside text-gray-600 space-y-1">
+                        <li>Understand core concepts.</li>
+                        <li>Apply theoretical knowledge to practical problems.</li>
+                        <li>Develop critical thinking skills.</li>
+                        <li>Prepare for advanced topics.</li>
+                    </ul>
+                </div>
+                <div className="bg-sky-50 p-5 rounded-lg shadow-sm">
+                    <h3 className="text-xl font-semibold text-gray-800 mb-2">Instructor</h3>
+                    <p className="text-gray-600">Dr. Jane Doe</p>
+                    <p className="text-gray-600 text-sm">Ph.D. in Education, 15+ years experience</p>
+                </div>
+            </div>
+            <button
+                onClick={() => showMessage('Enrollment feature is coming soon!')}
+                className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-6 rounded-full text-lg shadow-lg transform transition-all duration-300 ease-in-out hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-emerald-300"
+            >
+                Enroll Now
+            </button>
+        </div>
+    );
+};
+
+// About Page Component
+const AboutPage = ({ navigateTo, showMessage }) => {
+    return (
+        <div className="bg-white rounded-xl shadow-lg p-8 md:p-10 space-y-6">
+            <h2 className="text-4xl font-bold text-indigo-700 mb-4 text-center">About Yuktio</h2>
+            <p className="text-gray-700 text-lg leading-relaxed">
+                At Yuktio, we believe education should be **accessible**, **engaging**, and **empowering** for every young learner. Our mission is to create a vibrant online space where students aged 10 to 18 can explore subjects through interactive lessons, quizzes, and insightful articles — all designed to spark curiosity and build confidence.
+            </p>
+            <p className="text-gray-700 text-lg leading-relaxed">
+                We know that every student learns differently. That’s why Yuktio offers a variety of resources, from bite-sized lessons to fun quizzes, helping students find the learning style that works best for them.
+            </p>
+            <p className="text-gray-700 text-lg leading-relaxed">
+                Our team is passionate about making learning enjoyable and meaningful. Whether you’re a student looking to master a topic or a parent seeking reliable educational content, Yuktio is here to support your journey every step of the way.
+            </p>
+            <p className="text-gray-700 text-lg leading-relaxed">
+                Join us today and discover how learning smarter can open doors to endless possibilities.
+            </p>
+
+            {/* Call to Action */}
+            <div className="pt-8 text-center">
+                <h3 className="text-2xl font-bold text-gray-900 mb-6">Ready to start your learning adventure?</h3>
+                <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6">
+                    <button
+                        onClick={() => navigateTo('courses')}
+                        className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg transform transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-emerald-300"
+                    >
+                        Explore Lessons
+                    </button>
+                    <button
+                        onClick={() => showMessage('Quiz feature is coming soon!')}
+                        className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg transform transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-indigo-300"
+                    >
+                        Take a Quiz
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// Contact Page Component
+const ContactPage = ({ showMessage }) => {
+    const [formData, setFormData] = useState({
+        fullName: '',
+        email: '',
+        message: '',
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        console.log('Contact form submitted:', formData);
+        showMessage('Thank you for your message! We will get back to you shortly.');
+        setFormData({
+            fullName: '',
+            email: '',
+            message: '',
+        }); // Clear the form
+    };
+
+    return (
+        <div className="bg-white rounded-xl shadow-lg p-8 md:p-10 space-y-8 text-gray-900">
+            {/* Header Section */}
+            <header className="text-center mb-8">
+                <h1 className="text-4xl md:text-5xl font-extrabold text-indigo-700 mb-2">
+                    Get in Touch with Yuktio
+                </h1>
+                <p className="text-lg md:text-xl text-gray-700">
+                    Have questions, feedback, or just want to say hello? We’d love to hear from you!
+                </p>
+            </header>
+
+            {/* Contact Form */}
+            <section className="max-w-xl mx-auto">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    <div>
+                        <label htmlFor="fullName" className="block text-lg font-medium text-gray-800 mb-2">
+                            Full Name
+                        </label>
+                        <input
+                            type="text"
+                            id="fullName"
+                            name="fullName"
+                            value={formData.fullName}
+                            onChange={handleChange}
+                            placeholder="Your Full Name"
+                            className="w-full px-5 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 text-lg"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="email" className="block text-lg font-medium text-gray-800 mb-2">
+                            Email Address
+                        </label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            placeholder="your.email@example.com"
+                            className="w-full px-5 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 text-lg"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="message" className="block text-lg font-medium text-gray-800 mb-2">
+                            Message
+                        </label>
+                        <textarea
+                            id="message"
+                            name="message"
+                            value={formData.message}
+                            onChange={handleChange}
+                            rows="6"
+                            placeholder="Write your message here..."
+                            className="w-full px-5 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 text-lg resize-y"
+                            required
+                        ></textarea>
+                    </div>
+                    <button
+                        type="submit"
+                        className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-6 rounded-full text-lg shadow-lg transform transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-emerald-300"
+                    >
+                        Send Message
+                    </button>
+                </form>
+            </section>
+
+            {/* Contact Information Section */}
+            <section className="text-center pt-8 border-t border-gray-200 mt-8">
+                <h2 className="text-3xl font-bold text-gray-900 mb-6">Contact Information</h2>
+                <div className="space-y-4">
+                    <p className="text-lg text-gray-700 flex items-center justify-center">
+                        <i className="fas fa-envelope text-indigo-600 mr-3 text-2xl"></i>
+                        Email: <a href="mailto:hello@yuktio.com" className="ml-2 text-indigo-700 hover:underline">hello@yuktio.com</a>
+                    </p>
+                    <div className="flex justify-center space-x-8 text-4xl text-gray-700">
+                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-pink-600 transition-colors duration-200">
+                            <i className="fab fa-instagram"></i>
+                            <span className="sr-only">Instagram</span>
+                        </a>
+                        <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="hover:text-red-600 transition-colors duration-200">
+                            <i className="fab fa-youtube"></i>
+                            <span className="sr-only">YouTube</span>
+                        </a>
+                        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-700 transition-colors duration-200">
+                            <i className="fab fa-linkedin"></i>
+                            <span className="sr-only">LinkedIn</span>
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    );
+};
